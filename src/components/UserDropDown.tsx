@@ -5,7 +5,6 @@ import { Switch } from "./ui/switch";
 import { useContext } from "react";
 import { UserContext } from "@/App";
 import { Link, useNavigate } from "react-router-dom";
-import CreateSubreddit from "@/pages/CreateSubreddit";
 
 const UserDropDown = () => {
     const { logout } = useContext(UserContext);
