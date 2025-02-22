@@ -8,7 +8,6 @@ import { Link, useNavigate } from "react-router-dom";
 
 const UserDropDown = () => {
     const { logout } = useContext(UserContext);
-    const navigate = useNavigate();
     const { theme, setTheme } = useTheme();
 
     const handleChange = () => {
@@ -17,7 +16,6 @@ const UserDropDown = () => {
 
     const handleLogout = () => {
         logout();
-        navigate("/login");
     }
 
     return (

@@ -23,18 +23,26 @@ instance.interceptors.response.use(
 
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
-
             try {
-                const rt = localStorage.getItem("refresh_token");
-                const response = await axios.post('/auth/refresh-token', { rt });
-                const { accessToken, refreshToken } = response.data.data;
+                const refreshToken = localStorage.getItem("refresh_token");
+                console.log(refreshToken, "xxrt");
+                if (!refreshToken) throw new Error("No refresh token");
+
+                const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/refresh-token`, { refreshToken });
+
+                const { accessToken, refreshToken: newRefreshToken } = response.data.data;
 
                 localStorage.setItem("access_token", accessToken);
-                localStorage.setItem("refresh_token", refreshToken);
+                localStorage.setItem("refresh_token", newRefreshToken);
 
-                originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+                originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
                 return axios(originalRequest);
-            } catch (error) {
+            } catch (err) {
+                console.error("Refresh token expired or invalid, logging out...");
+                localStorage.removeItem("user");
+                localStorage.removeItem("access_token");
+                localStorage.removeItem("refresh_token");
+                window.location.href = "/login";
             }
         }
 
